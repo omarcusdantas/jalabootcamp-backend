@@ -8,7 +8,7 @@ public interface IExchangeService<T, TTarget> where T : Currency where TTarget :
     void ExchangeFunds(decimal amount);
 }
 
-public class Exchange<T,TTarget>(IWalletRepository<T> repository, IWalletRepository<TTarget> repositoryTarget) 
+public class ExchangeService<T,TTarget>(IWalletRepository<T> repository, IWalletRepository<TTarget> repositoryTarget) 
     : IExchangeService<T, TTarget> where T : Currency where TTarget : Currency
 {
     private readonly IWalletRepository<T> _repository = repository;
@@ -16,9 +16,9 @@ public class Exchange<T,TTarget>(IWalletRepository<T> repository, IWalletReposit
 
     public void ExchangeFunds(decimal amount)
     {
-        if (amount <= GetBalanceOriginWallet()) return;
+        if (amount > GetBalanceOriginWallet()) throw new InvalidOperationException("Insufficient funds");
         
-        _repository.Create(Math.Round(amount,2).ToString());
+        _repository.Create(Math.Round(amount * -1, 2).ToString());
 
         Converter converter = new();
 

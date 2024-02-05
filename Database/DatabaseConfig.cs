@@ -4,13 +4,18 @@ namespace MyWalletAPI.Database;
 
 public class DatabaseConfig
 {
+    private static IConfiguration Configuration { get; set; }
+
     public static ConnectionMultiplexer? RedisConnection { get; private set; }
 
-    public static void Initialize()
+    public static void Initialize(IConfiguration configuration)
     {
+        Configuration = configuration;
+
         try
         {
-            RedisConnection = ConnectionMultiplexer.Connect("localhost");
+            string redisConnectionString = Configuration["ConnectionString"];
+            RedisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
         }
         catch (Exception ex)
         {
@@ -19,4 +24,3 @@ public class DatabaseConfig
         }
     }
 }
-
